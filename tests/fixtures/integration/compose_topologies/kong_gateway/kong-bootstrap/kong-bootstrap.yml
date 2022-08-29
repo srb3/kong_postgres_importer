@@ -1,0 +1,27 @@
+version: '3'
+services:
+  kong-bootstrap:
+    image: ${KONG_IMAGE:-kong/kong-gateway}:${KONG_VERSION:-2.6.0.2-alpine}
+    container_name: kong-bootstrap
+    hostname: kong-bootstrap
+    user: kong
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.5
+    depends_on:
+      - postgres
+    restart: on-failure
+    command: kong migrations bootstrap -vv
+    volumes:
+      - ../../plugins:/opt/kong/plugins:Z
+    environment:
+      - KONG_PG_PASSWORD=${DB_PASSWORD}
+      - KONG_PG_USER=${DB_USERNAME}
+      - KONG_PG_DATABASE=${DB_NAME}
+      - KONG_PG_HOST=postgres
+      - KONG_PASSWORD=password
+      - KONG_LICENSE_DATA=${KONG_LICENSE_DATA}
+      - KONG_PLUGINS=${KONG_PLUGINS}
+      - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
+      - KONG_LOG_LEVEL=${KONG_LOG_LEVEL:-info}
+      - AWS_REGION=eu-west-1

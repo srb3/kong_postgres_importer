@@ -1,0 +1,188 @@
+version: '3'
+services:
+  haproxy:
+    build: ./webservers/haproxy
+    container_name: httpbin
+    hostname: httpbin
+    ports:
+      - 86:80
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.20
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
+
+  httpbin1:
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.8
+    image: kennethreitz/httpbin:latest
+    restart: always
+    container_name: httpbin1
+    hostname: httpbin1
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
+
+  httpbin2:
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.16
+    image: kennethreitz/httpbin:latest
+    restart: always
+    container_name: httpbin2
+    hostname: httpbin2
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
+
+  httpbin3:
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.17
+    image: kennethreitz/httpbin:latest
+    restart: always
+    container_name: httpbin3
+    hostname: httpbin3
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
+
+  httpbin4:
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.18
+    image: kennethreitz/httpbin:latest
+    restart: always
+    container_name: httpbin4
+    hostname: httpbin4
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
+
+  httpbin5:
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.19
+    image: kennethreitz/httpbin:latest
+    restart: always
+    container_name: httpbin5
+    hostname: httpbin5
+    extra_hosts:
+      - "kong-control-plane:10.5.0.2"
+      - "kong-data-plane-1:10.5.0.3"
+      - "kong-dbless:10.5.0.4"
+      - "postgres:10.5.0.6"
+      - "pgadmin:10.5.0.7"
+      - "httpbin1:10.5.0.8"
+      - "httpbin2:10.5.0.16"
+      - "httpbin3:10.5.0.17"
+      - "httpbin4:10.5.0.18"
+      - "httpbin5:10.5.0.19"
+      - "datadog:10.5.0.9"
+      - "splunk:10.5.0.10"
+      - "redis:10.5.0.11"
+      - "smtp:10.5.0.12"
+      - "influxdb:10.5.0.13"
+      - "grafana:10.5.0.14"
+      - "k6:10.5.0.15"
+      - "httpbin:10.5.0.20"
+      - "renderer:10.5.0.21"
+      - "kong-data-plane-2:10.5.0.22"
+      - "sidecar:10.5.0.23"
