@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export CONFIG_FILE_PATH=${config_file_path}
-export DB_HOSTNAME=${db_hostname}
-export DB_NAME=${db_name}
-export DB_USERNAME=${db_username}
-export DB_PASSWORD=${db_password}
-export KONG_MEM_CACHE_SIZE=${mem_cache_size}

@@ -1,0 +1,27 @@
+version: '3'
+services:
+  k6:
+    image: grafana/k6:latest
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.12
+    ports:
+      - "6565:6565"
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6
+    volumes:
+      - ./k6/samples:/scripts
+    container_name: k6
+    hostname: k6
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"

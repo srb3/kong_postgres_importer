@@ -1,0 +1,55 @@
+version: '3'
+services:
+  grafana:
+    image: grafana/grafana:latest
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.10
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_RENDERING_SERVER_URL=http://renderer:8088/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+      - GF_LOG_FILTERS=rendering:debug
+    volumes:
+      - ./grafana/grafana:/etc/grafana/provisioning/
+      - ./grafana/grafana_dashboards:/var/lib/grafana/dashboards
+    container_name: grafana
+    hostname: grafana
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"
+
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.11
+    container_name: renderer
+    hostname: renderer
+    ports:
+      - 8088 
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"

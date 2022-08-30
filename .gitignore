@@ -13,5 +13,4 @@ tests/fixtures/**/temp_files/*
 kubeconfig*
 temp_files/*
 ./*.json
-*.json
-*.yaml
+config.yaml
