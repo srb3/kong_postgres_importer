@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export CLIENT_ID=${client_id}
-export CLIENT_SECRET=${client_secret}
-export TENANT_ID=${tenant_id}
-export KONG_ADMIN_USER=${admin_user}
-export KONG_ADMIN_PASS=${admin_pass}
-export KONG_ADMIN_EMAIL=${admin_email}

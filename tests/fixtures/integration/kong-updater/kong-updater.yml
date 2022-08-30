@@ -1,0 +1,28 @@
+version: '3'
+services:
+  kong-updater:
+    build: ./kong-updater/kong-updater
+    container_name: kong-updater
+    hostname: kong-updater
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.14
+    environment:
+      - KONG_ADMIN_URL=${KONG_ADMIN_URL:-http://kong-control-plane:8001}
+      - UPDATE_RATE=${UPDATE_RATE:-30}
+      - UPDATE_TYPE=${UPDATE_TYPE:-service_retries}
+      - KONG_ADMIN_TOKEN=${KONG_ADMIN_TOKEN:-password}
+      - PREFIX=${PREFIX:-perf}
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"
+      - "kong-updater:10.5.0.14"

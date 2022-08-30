@@ -1,0 +1,23 @@
+version: '3'
+services:
+  mockbackend:
+    build: ./mockbackend/mockbackend
+    container_name: mockbackend
+    hostname: mockbackend
+    ports:
+      - 8080:80
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.7
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"

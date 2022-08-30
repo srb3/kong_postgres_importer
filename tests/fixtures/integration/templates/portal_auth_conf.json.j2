@@ -1,7 +1,0 @@
-{
-  "config": {
-    "portal": true,
-    "portal_auth": "openid-connect",
-    "portal_auth_conf": {"downstream_headers_claims":["preferred_username"],"groups_claim":["roles"],"groups_required":["portal-group"],"session_cookie_domain":".localhost","verify_parameters":false,"leeway":100,"auth_methods":["authorization_code","password","session"],"redirect_uri":["http://localhost:8004/{{ workspace }}/auth"],"login_action":"redirect","logout_redirect_uri":["http://localhost:8003/{{ workspace }}"],"consumer_claim":["preferred_username"],"ssl_verify":false,"consumer_by":["username"],"scopes":["openid","profile","email","offline_access","{{ client_id }}/.default"],"logout_query_arg":"logout","client_secret":["{{ client_secret }}"],"issuer":"https://login.microsoftonline.com/{{ tenant_id }}/v2.0/.well-known/openid-configuration","forbidden_redirect_uri":["http://localhost:8003/{{ workspace }}/unauthorized"],"client_id":["{{ client_id }}"],"logout_methods":["GET"],"login_redirect_uri":["http://localhost:8003/{{ workspace }}"],"login_redirect_mode":"query"}
-  }
-}
