@@ -1,14 +1,14 @@
 version: '3'
 services:
-  mockbackend:
-    build: ./mockbackend/mockbackend
-    container_name: mockbackend
-    hostname: mockbackend
+  haproxy:
+    build: ./haproxy/haproxy
+    container_name: haproxy
+    hostname: haproxy
     ports:
-      - 8080:80
+      - 8000:443
     networks:
       demo-net:
-        ipv4_address: 10.5.0.7
+        ipv4_address: 10.5.0.6
     extra_hosts:
       - "postgres:10.5.0.2"
       - "kong-control-plane:10.5.0.3"
