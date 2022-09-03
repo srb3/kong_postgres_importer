@@ -1,0 +1,102 @@
+version: '3'
+services:
+  kong-control-plane:
+    image: ${KONG_IMAGE:-kong/kong-gateway}:${KONG_VERSION:-2.6.0.2-alpine}
+    container_name: kong-control-plane
+    hostname: kong-control-plane
+    user: kong
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.3
+    depends_on:
+      - kong-bootstrap
+    restart: always
+    ports:
+      - 8001:8001
+      - 8444:8444
+      - 8002:8002
+      - 8003:8003
+      - 8004:8004
+    command: ${KONG_START_CMD:-kong start -vv}
+    volumes:
+      - ../../plugins:/opt/kong/plugins:Z
+      - ./cluster_certs/cluster.crt:/etc/secrets/kong-cluster/cluster.crt:Z
+      - ./cluster_certs/cluster.key:/etc/secrets/kong-cluster/cluster.key:Z
+      - ./cluster_certs/ca.crt:/etc/secrets/kong-cluster/ca.crt:Z
+    environment:
+      - KONG_LOG_LEVEL=${KONG_LOG_LEVEL:-debug}
+      - KONG_LICENSE_DATA=${KONG_LICENSE_DATA}
+      - KONG_PREFIX=/usr/local/kong
+      - KONG_PROXY_LISTEN=off
+      - KONG_STREAM_LISTEN=off
+      - KONG_DATABASE=postgres
+      - KONG_VITALS=off
+      - KONG_ENFORCE_RBAC=on
+      - KONG_PORTAL_IS_LEGACY=off
+      - KONG_PORTAL_GUI_USE_SUBDOMAINS=off
+      - KONG_PORTAL_AUTH_LOGIN_ATTEMPTS=0
+      - KONG_PORTAL_TOKEN_EXP=3600
+      - KONG_ROLE=control_plane
+      - KONG_HEADERS=off
+      - KONG_AUDIT_LOG=on
+      - KONG_SSL_CIPHER_SUITE=intermediate
+      - KONG_REAL_IP_RECURSIVE=on
+      - KONG_REAL_IP_HEADER= X-Forward-For
+      - KONG_ANONYMOUS_REPORTS=off
+      - KONG_UNTRUSTED_LUA=sandbox
+      - KONG_DB_UPDATE_FREQUENCY=${KONG_DB_UPDATE_FREQUENCY:-30}
+      - KONG_ROUTE_VALIDATION_STRATEGY=off
+      - KONG_CLUSTER_MAX_PAYLOAD=${KONG_CLUSTER_MAX_PAYLOAD:-8388608}
+      - KONG_CLUSTER_DATA_PLANE_PURGE_DELAY=${KONG_CLUSTER_DATA_PLANE_PURGE_DELAY:-259200}
+      - KONG_PG_PASSWORD=${DB_PASSWORD:-kong}
+      - KONG_PG_USER=${DB_USERNAME:-kong}
+      - KONG_PG_DATABASE=${DB_NAME:-kong}
+      - KONG_PG_HOST=${DB_HOST:-postgres}
+      - KONG_PLUGINS=${KONG_PLUGINS:-bundled}
+      - KONG_CLUSTER_LISTEN=0.0.0.0:8005 ssl
+      - KONG_CLUSTER_TELEMETRY_LISTEN=0.0.0.0:8006 ssl
+      - KONG_CLUSTER_CERT=/etc/secrets/kong-cluster/cluster.crt
+      - KONG_CLUSTER_CERT_KEY=/etc/secrets/kong-cluster/cluster.key
+      - KONG_CLUSTER_MTLS=shared
+      - KONG_ADMIN_API_URI=http://localhost:8001
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+      - KONG_STATUS_LISTEN=0.0.0.0:8100
+      - KONG_ADMIN_GUI_LISTEN=0.0.0.0:8002
+      - KONG_ADMIN_GUI_URL=http://localhost:8002
+      - KONG_ADMIN_GUI_AUTH=basic-auth
+      - KONG_PORTAL_GUI_ACCESS_LOG=${KONG_PORTAL_GUI_ACCESS_LOG:-/dev/stdout}
+      - KONG_PORTAL_GUI_ERROR_LOG=${KONG_PORTAL_GUI_ERROR_LOG:-/dev/stderr}
+      - KONG_ADMIN_GUI_ACCESS_LOG=${KONG_ADMIN_GUI_ACCESS_LOG:-/dev/stdout}
+      - KONG_ADMIN_GUI_ERROR_LOG=${KONG_ADMIN_GUI_ERROR_LOG:-/dev/stderr}
+      - KONG_PORTAL=on
+      - KONG_TRUSTED_IPS=0.0.0.0/0,::0
+      - KONG_PORTAL_API_LISTEN=0.0.0.0:8004
+      - KONG_PORTAL_API_URL=http://localhost:8004
+      - KONG_PORTAL_API_ACCESS_LOG=${KONG_PORTAL_API_ACCESS_LOG:-/dev/stdout}
+      - KONG_PORTAL_API_ERROR_LOG=${KONG_PORTAL_API_ERROR_LOG:-/dev/stderr}
+      - KONG_ADMIN_ACCESS_LOG=${KONG_ADMIN_ACCESS_LOG:-/dev/stdout}
+      - KONG_ADMIN_ERROR_LOG=${KONG_ADMIN_ERROR_LOG:-/dev/stderr}
+      - KONG_PORTAL_AUTH=basic-auth
+      - KONG_PORTAL_AUTO_APPROVE=on
+      - KONG_PORTAL_GUI_LISTEN=0.0.0.0:8003
+      - KONG_PORTAL_GUI_PROTOCOL=http
+      - KONG_PORTAL_GUI_HOST=localhost:8003
+      - KONG_NGINX_WORKER_PROCESSES=${KONG_NGINX_WORKER_PROCESSES:-8}
+      - KONG_ADMIN_GUI_SESSION_CONF={"cookie_secure":false,"storage":"kong","cookie_name":"admin_session","cookie_lifetime":31557600,"cookie_samesite":"off","secret":"thatsecret"}
+      - KONG_PORTAL_SESSION_CONF={"storage":"kong","cookie_name":"portal_session","secret":"thissecret","cookie_secure":false,"cookie_samesite":"off"}
+      - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
+      - AWS_REGION=eu-west-1
+      - KONG_MEM_CACHE_SIZE=${KONG_MEM_CACHE_SIZE:-128m}
+      - KONG_LUA_SSL_TRUSTED_CERTIFICATE=${KONG_LUA_SSL_TRUSTED_CERTIFICATE:-system}
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"

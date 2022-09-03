@@ -1,9 +1,5 @@
-local function sleep(n)
-  os.execute("sleep " .. tonumber(n))
-end
-
 local function mockbackend(applet)
-  -- sleep(0.09)
+  core.msleep(90)
   applet:set_status(200)
   applet:add_header("content-length", 2)
   applet:add_header("content-type", "text/html")

@@ -1,4 +1,3 @@
-from os import wait
 import psycopg
 import json
 import uuid
@@ -59,8 +58,8 @@ class Runner(object):
         self.number_of_services: int = int(self.data["services_per_workspace"])
         self.number_of_routes: int = int(self.data["routes_per_service"])
         self.number_of_consumers: int = int(self.data["consumers_per_workspace"])
-        self.number_of_plugins: int = len(self.data["plugins"])
-        self.plugins = self.data["plugins"]
+        self.number_of_plugins: int = len(self.data["plugins"]) or 0
+        self.plugins = self.data["plugins"] or {}
         self.svc_defaults = self.get_svc_defaults(self.data)
 
         self.entites: List[str] = [
@@ -549,7 +548,7 @@ class Runner(object):
 
     def get_entities(self, items: List[str], table: str) -> Dict[str, Any]:
         data = {}
-        with psycopg.connect(self.db_connect({})) as conn:
+        with psycopg.connect(self.db_connect(self.db_params)) as conn:
             with conn.cursor() as cursor:
                 with cursor.copy(
                     "COPY (SELECT {} FROM {}) TO STDOUT".format(

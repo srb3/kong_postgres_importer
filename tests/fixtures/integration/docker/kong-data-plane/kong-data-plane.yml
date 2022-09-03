@@ -1,0 +1,139 @@
+version: '3'
+services:
+  kong-data-plane-1:
+    image: ${KONG_IMAGE:-kong/kong-gateway}:${KONG_VERSION:-2.6.0.2-alpine}
+    container_name: kong-data-plane-1
+    hostname: kong-data-plane-1
+    user: kong
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16G
+        reservations:
+          cpus: '8'
+          memory: 16G
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.4
+    depends_on:
+      - kong-control-plane
+    restart: always
+    volumes:
+      - ../../plugins:/opt/kong/plugins:Z
+      - ./cluster_certs/cluster.crt:/etc/secrets/kong-cluster/cluster.crt:Z
+      - ./cluster_certs/cluster.key:/etc/secrets/kong-cluster/cluster.key:Z
+      - ./cluster_certs/ca.crt:/etc/secrets/kong-cluster/ca.crt:Z
+    ports:
+      - 8082:8443
+    command: ${KONG_START_CMD:-kong start}
+    environment:
+      - KONG_PROXY_LISTEN=0.0.0.0:8443 http2 ssl reuseport backlog=16384
+      - KONG_STATUS_LISTEN=0.0.0.0:8100 ssl
+      - KONG_NGINX_HTTP_LOG_FORMAT=default '$$remote_addr - $$remote_user [$$time_local] "$$request" $$status $$body_bytes_sent "$$http_referer" "$$http_user_agent" $$http_x_forwarded_for "$$sent_http_x_vcap_request_id" "$$sent_http_x_request_id" "$$sent_http_x_hsbc_request_correlation_id" req_time:$$request_time upstream_time:$$upstream_response_time upstream_addr:$$upstream_addr upstream_status:$$upstream_status'
+      - KONG_ANONYMOUS_REPORTS=off
+      - KONG_ROLE=data_plane
+      - KONG_CLUSTER_MAX_PAYLOAD=${KONG_CLUSTER_MAX_PAYLOAD:-10485760}
+      - KONG_NGINX_PROXY_ADD_HEADER=Cache-Control 'no-store, no-cache, must-revalidate'; add_header Pragma 'no-cache'; add_header Strict-Transport-Security 'max-age=31536000' always; add_header Content-Security-Policy "default-src 'self';" always
+      - KONG_DATABASE=off
+      - KONG_WORKER_CONSISTENCY=${KONG_WORKER_CONSISTENCY:-eventual}
+      - KONG_WORKER_STATE_UPDATE_FREQUENCY=${KONG_WORKER_STATE_UPDATE_FREQUENCY:-30}
+      - KONG_VITALS=off
+      - KONG_UNTRUSTED_LUA=sandbox
+      - KONG_PROXY_ACCESS_LOG=${KONG_PROXY_ACCESS_LOG:-/dev/stdout}
+      - KONG_PROXY_ERROR_LOG=${KONG_PROXY_ERROR_LOG:-/dev/stderr}
+      - KONG_CLUSTER_LISTEN=off
+      - KONG_CLUSTER_TELEMETRY_LISTEN=off
+      - KONG_CLUSTER_CONTROL_PLANE=kong-control-plane:8005
+      - KONG_CLUSTER_TELEMETRY_ENDPOINT=kong-control-plane:8006
+      - KONG_CLUSTER_MTLS=shared
+      - KONG_CLUSTER_CERT=/etc/secrets/kong-cluster/cluster.crt
+      - KONG_CLUSTER_CERT_KEY=/etc/secrets/kong-cluster/cluster.key
+      - KONG_NGINX_WORKER_PROCESSES=${KONG_NGINX_WORKER_PROCESSES_DP:-8}
+      - KONG_LICENSE_DATA=${KONG_LICENSE_DATA}
+      - KONG_LOG_LEVEL=${KONG_LOG_LEVEL:-info}
+      - KONG_MEM_CACHE_SIZE=${KONG_MEM_CACHE_SIZE:-128m}
+      - KONG_PLUGINS=${KONG_PLUGINS}
+      - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
+      - KONG_LUA_SSL_TRUSTED_CERTIFICATE=${KONG_LUA_SSL_TRUSTED_CERTIFICATE:-system}
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"
+
+  kong-data-plane-2:
+    image: ${KONG_IMAGE:-kong/kong-gateway}:${KONG_VERSION:-2.6.0.2-alpine}
+    container_name: kong-data-plane-2
+    hostname: kong-data-plane-2
+    user: kong
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+          memory: 16G
+        reservations:
+          cpus: '8'
+          memory: 16G
+    networks:
+      demo-net:
+        ipv4_address: 10.5.0.5
+    depends_on:
+      - kong-control-plane
+    restart: always
+    volumes:
+      - ../../plugins:/opt/kong/plugins:Z
+      - ./cluster_certs/cluster.crt:/etc/secrets/kong-cluster/cluster.crt:Z
+      - ./cluster_certs/cluster.key:/etc/secrets/kong-cluster/cluster.key:Z
+      - ./cluster_certs/ca.crt:/etc/secrets/kong-cluster/ca.crt:Z
+    ports:
+      - 8087:8443
+    command: ${KONG_START_CMD:-kong start}
+    environment:
+      - KONG_PROXY_LISTEN=0.0.0.0:8443 http2 ssl reuseport backlog=16384
+      - KONG_STATUS_LISTEN=0.0.0.0:8100 ssl
+      - KONG_NGINX_HTTP_LOG_FORMAT=default '$$remote_addr - $$remote_user [$$time_local] "$$request" $$status $$body_bytes_sent "$$http_referer" "$$http_user_agent" $$http_x_forwarded_for "$$sent_http_x_vcap_request_id" "$$sent_http_x_request_id" "$$sent_http_x_hsbc_request_correlation_id" req_time:$$request_time upstream_time:$$upstream_response_time upstream_addr:$$upstream_addr upstream_status:$$upstream_status'
+      - KONG_ANONYMOUS_REPORTS=off
+      - KONG_ROLE=data_plane
+      - KONG_CLUSTER_MAX_PAYLOAD=${KONG_CLUSTER_MAX_PAYLOAD:-10485760}
+      - KONG_NGINX_PROXY_ADD_HEADER=Cache-Control 'no-store, no-cache, must-revalidate'; add_header Pragma 'no-cache'; add_header Strict-Transport-Security 'max-age=31536000' always; add_header Content-Security-Policy "default-src 'self';" always
+      - KONG_DATABASE=off
+      - KONG_WORKER_CONSISTENCY=${KONG_WORKER_CONSISTENCY:-eventual}
+      - KONG_WORKER_STATE_UPDATE_FREQUENCY=30
+      - KONG_VITALS=off
+      - KONG_UNTRUSTED_LUA=sandbox
+      - KONG_PROXY_ACCESS_LOG=${KONG_PROXY_ACCESS_LOG:-/dev/stdout}
+      - KONG_PROXY_ERROR_LOG=${KONG_PROXY_ERROR_LOG:-/dev/stderr}
+      - KONG_CLUSTER_LISTEN=off
+      - KONG_CLUSTER_TELEMETRY_LISTEN=off
+      - KONG_CLUSTER_CONTROL_PLANE=kong-control-plane:8005
+      - KONG_CLUSTER_TELEMETRY_ENDPOINT=kong-control-plane:8006
+      - KONG_CLUSTER_MTLS=shared
+      - KONG_CLUSTER_CERT=/etc/secrets/kong-cluster/cluster.crt
+      - KONG_CLUSTER_CERT_KEY=/etc/secrets/kong-cluster/cluster.key
+      - KONG_NGINX_WORKER_PROCESSES=${KONG_NGINX_WORKER_PROCESSES_DP:-8}
+      - KONG_LICENSE_DATA=${KONG_LICENSE_DATA}
+      - KONG_LOG_LEVEL=${KONG_LOG_LEVEL:-info}
+      - KONG_MEM_CACHE_SIZE=${KONG_MEM_CACHE_SIZE:-128m}
+      - KONG_PLUGINS=${KONG_PLUGINS}
+      - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
+      - KONG_LUA_SSL_TRUSTED_CERTIFICATE=${KONG_LUA_SSL_TRUSTED_CERTIFICATE:-system}
+    extra_hosts:
+      - "postgres:10.5.0.2"
+      - "kong-control-plane:10.5.0.3"
+      - "kong-data-plane-1:10.5.0.4"
+      - "kong-data-plane-2:10.5.0.5"
+      - "haproxy:10.5.0.6"
+      - "mockbackend:10.5.0.7"
+      - "splunk:10.5.0.8"
+      - "influxdb:10.5.0.9"
+      - "grafana:10.5.0.10"
+      - "renderer:10.5.0.11"
+      - "k6:10.5.0.12"
