@@ -14,5 +14,5 @@ kubeconfig*
 temp_files/*
 ./*.json
 config.yaml
-./tests/fixtures/integration/docker/k6/samples/data.json
-./tests/fixtures/plugins/**
+tests/fixtures/integration/docker/k6/samples/data.json
+tests/fixtures/plugins/**
