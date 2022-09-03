@@ -1,18 +1,5 @@
+tests/fixtures/integration/docker/k6/samples/data.json
 __pycache__/
 **/__pycache__
-# terraform
-terraform.tfvars
-terraform.tfstate*
-.terraform*
-tests/fixtures/**/terraform.tfvars
-tests/fixtures/**/.terraform
-tests/fixtures/**/terraform.tfstate*
-tests/fixtures/**/terraform.tfstate.d/*
-tests/fixtures/**/temp_files/*
-*.log
-kubeconfig*
-temp_files/*
 ./*.json
 config.yaml
-tests/fixtures/integration/docker/k6/samples/data.json
-tests/fixtures/plugins/**
