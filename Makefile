@@ -160,13 +160,49 @@ plugins:
       status: null
 endef
 
-export CONFIG_FILE
+define CONFIG_FILE_PLAIN
+workspaces: $(number_of_workspaces)
+prefix: $(prefix)
+consumers_per_workspace: $(number_of_consumers)
+services_per_workspace: $(number_of_services)
+service_protocol: $(service_protocol)
+service_host: $(service_host)
+service_port: $(service_port)
+service_path: $(service_path)
+routes_per_service: $(number_of_routes)
+plugins:
+  file-log:
+    config:
+      path: "/dev/null"
+      custom_fields_by_lua: {}
+      reopen: false
+  cors:
+    config:
+      max_age: null
+      credentials: false
+      exposed_headers: null
+      methods: [ "GET" ]
+      headers: null
+      preflight_continue: false
+      origins: [ "*" ]
+  ip-restriction:
+    config:
+      message: null
+      allow: null
+      deny: [ "1.1.1.1" ]
+      status: null
+endef
+
+export CONFIG_FILE_PLAIN
 
 test: generate_config integration_up splunk_setup script_run perf_test
 clean: script_clean integration_down clean_config
 
 generate_config:
 	echo "$$CONFIG_FILE" > $(CONFIG_FILE_PATH)
+
+generate_config_plain:
+	echo "$$CONFIG_FILE_PLAIN" > $(CONFIG_FILE_PATH)
 
 clean_config:
 	rm -f $(CONFIG_FILE_PATH)
