@@ -17,7 +17,7 @@ kong_version ?= 2.8.1.3-rhel7
 kong_image ?= kong/kong-gateway
 mem_cache_size ?= 256m
 portal_app_auth ?= kong-oauth2
-plugins ?= bundled,splunk-hec
+plugins ?= acl,acme,application-registration,aws-lambda,azure-functions,basic-auth,bot-detection,canary,collector,correlation-id,cors,datadog,degraphql,exit-transformer,file-log,forward-proxy,graphql-proxy-cache-advanced,graphql-rate-limiting-advanced,grpc-gateway,grpc-web,hmac-auth,http-log,ip-restriction,jq,jwt,jwt-signer,kafka-log,kafka-upstream,key-auth,key-auth-enc,ldap-auth,ldap-auth-advanced,loggly,mocking,oauth2,oauth2-introspection,opa,openid-connect,post-function,pre-function,prometheus,proxy-cache,proxy-cache-advanced,rate-limiting,rate-limiting-advanced,request-size-limiting,request-termination,request-transformer,request-transformer-advanced,request-validator,response-ratelimiting,response-transformer,response-transformer-advanced,route-by-header,route-transformer-advanced,session,statsd,statsd-advanced,syslog,tcp-log,udp-log,upstream-timeout,vault-auth,zipkin,splunk-hec
 log_level ?= debug
 db_update_frequency ?= 30s
 cluster_max_payload ?= 8388608
@@ -113,7 +113,7 @@ export TIME_UNIT = ${time_unit}
 export DURATION = ${duration}
 
 
-define CONFIG_FILE 
+define CONFIG_FILE
 workspaces: $(number_of_workspaces)
 prefix: $(prefix)
 consumers_per_workspace: $(number_of_consumers)
@@ -159,6 +159,8 @@ plugins:
       deny: [ "1.1.1.1" ]
       status: null
 endef
+
+export CONFIG_FILE
 
 define CONFIG_FILE_PLAIN
 workspaces: $(number_of_workspaces)
