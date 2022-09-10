@@ -59,11 +59,11 @@ time_unit ?= 1s
 duration ?= 60s
 
 ifdef FORCE
-	export FORCE_RECREATE=--force-recreate --build -V --no-deps
+export FORCE_RECREATE=--force-recreate --build -V --no-deps
 endif
 
 ifndef KONG_LICENSE_DATA
-	$(error KONG_LICENSE_DATA is undefined)
+$(error KONG_LICENSE_DATA is undefined)
 endif
 
 export KONG_LOG_LEVEL=$(log_level)
@@ -196,6 +196,25 @@ plugins:
 endef
 
 export CONFIG_FILE_PLAIN
+
+define CONFIG_FILE_PLAIN_TERM
+workspaces: $(number_of_workspaces)
+prefix: $(prefix)
+consumers_per_workspace: $(number_of_consumers)
+services_per_workspace: $(number_of_services)
+service_protocol: $(service_protocol)
+service_host: $(service_host)
+service_port: $(service_port)
+service_path: $(service_path)
+routes_per_service: $(number_of_routes)
+plugins:
+  request-termination:
+	  config:
+		  status_code: 200
+      message: OK
+endef
+
+export CONFIG_FILE_PLAIN_TERM
 
 test: generate_config integration_up splunk_setup script_run perf_test
 clean: script_clean integration_down clean_config
