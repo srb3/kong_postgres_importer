@@ -4,6 +4,7 @@ import uuid
 import yaml
 import re
 from typing import Dict, List, Any
+from datetime import datetime, timezone
 
 
 class Runner(object):
@@ -31,6 +32,8 @@ class Runner(object):
         delete=False,
         route_dump=False,
         route_dump_location=None,
+        route_prefix=None,
+        route_trailing_slash=None,
     ) -> None:
         """
         Parameters
@@ -54,6 +57,8 @@ class Runner(object):
         self.required_workspace_names: List[str] = [
             v[1] for v in self.required_workspaces
         ]
+        self.route_prefix = route_prefix
+        self.route_trailing_slash = route_trailing_slash
 
         self.number_of_services: int = int(self.data["services_per_workspace"])
         self.number_of_routes: int = int(self.data["routes_per_service"])
@@ -108,6 +113,10 @@ class Runner(object):
                 "ws_id",
                 "request_buffering",
                 "response_buffering",
+                "methods",
+                "created_at",
+                "updated_at",
+                "hosts",
             ],
             "plugins": [
                 "id",
@@ -275,14 +284,21 @@ class Runner(object):
         name = p[0]
         service_id = p[1]
         ws_id = p[2]
-        return (
-            "{},{},{},{{http% https}},{{/{}}},0,true,false,426,v0,{},true,true".format(
-                uuid.uuid4(),
-                name,
-                service_id,
-                name,
-                ws_id,
-            )
+        created_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %X+00")
+        if self.route_prefix:
+            path = "/" + self.prefix + "/" + name
+        else:
+            path = "/" + name
+        if self.route_trailing_slash:
+            path = path + "/"
+        return "{},{},{},{{http% https}},{{{}}},0,true,false,426,v0,{},true,true,{{GET% POST}},{},{},{{}}".format(
+            uuid.uuid4(),
+            name,
+            service_id,
+            path,
+            ws_id,
+            created_at,
+            created_at,
         )
 
     def plugins_data_hydrate(self, comp: str):
@@ -426,7 +442,7 @@ class Runner(object):
     def name_gen(self, quantity: int, entity: str) -> List[List[str]]:
         data = []
         for e in range(quantity):
-            data.append([str(uuid.uuid4()), "{}-{}-{}".format(self.prefix, entity, e)])
+            data.append([str(uuid.uuid4()), "{}-{}".format(entity, e)])
         return data
 
     def gen_workspaces(self, quantity) -> List[List[str]]:
@@ -655,6 +671,18 @@ them if this flag is set",
         help="Dump out a JSON list of all route paths (for automated load test)",
     )
 
+    parser.add_argument(
+        "--route-prefix",
+        action="store_true",
+        help="Append the prefix to the start of the route",
+    )
+
+    parser.add_argument(
+        "--route-trailing-slash",
+        action="store_true",
+        help="Append a trailing slash to the route path",
+    )
+
     args = parser.parse_args()
     params = {
         "hostname": args.hostname,
@@ -663,5 +691,11 @@ them if this flag is set",
         "password": args.password,
     }
     Runner(
-        args.config_file, params, args.delete, args.route_dump, args.route_dump_location
+        args.config_file,
+        params,
+        args.delete,
+        args.route_dump,
+        args.route_dump_location,
+        args.route_prefix,
+        args.route_trailing_slash,
     )
