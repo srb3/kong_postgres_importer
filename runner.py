@@ -98,6 +98,8 @@ class Runner(object):
                 "read_timeout",
                 "ws_id",
                 "enabled",
+                "created_at",
+                "updated_at",
             ],
             "routes": [
                 "id",
@@ -247,6 +249,7 @@ class Runner(object):
         p = comp.split("^")
         name = p[0]
         ws_id = p[1]
+        created_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %X+00")
         retries = self.svc_defaults["retries"]
         protocol = self.svc_defaults["protocol"]
         host = self.svc_defaults["host"]
@@ -255,7 +258,7 @@ class Runner(object):
         connect_timeout = self.svc_defaults["connect_timeout"]
         write_timeout = self.svc_defaults["write_timeout"]
         read_timeout = self.svc_defaults["read_timeout"]
-        return "{},{},{},{},{},{},{},{},{},{},{},true".format(
+        return "{},{},{},{},{},{},{},{},{},{},{},true,{},{}".format(
             uuid.uuid4(),
             name,
             retries,
@@ -267,6 +270,8 @@ class Runner(object):
             write_timeout,
             read_timeout,
             ws_id,
+            created_at,
+            created_at,
         )
 
     def consumers_data_hydrate(self, comp: str):
