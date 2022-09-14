@@ -221,7 +221,13 @@ class Runner(object):
         for ws in self.required_workspace_names:
             for s in range(self.number_of_services):
                 for r in range(self.number_of_routes):
-                    routes.append("{}-svc-{}-route-{}".format(ws, s, r))
+                    if self.route_prefix:
+                        path = "{}/{}-svc-{}-route-{}".format(self.prefix, ws, s, r)
+                    else:
+                        path = "{}-svc-{}-route-{}".format(ws, s, r)
+                    if self.route_trailing_slash:
+                        path = path + "/fakeAccounts?count=10&sleep=90"
+                    routes.append(path)
         return routes
 
     def routes_require_string(self) -> List[str]:
@@ -447,7 +453,7 @@ class Runner(object):
     def name_gen(self, quantity: int, entity: str) -> List[List[str]]:
         data = []
         for e in range(quantity):
-            data.append([str(uuid.uuid4()), "{}-{}".format(entity, e)])
+            data.append([str(uuid.uuid4()), "{}-{}-{}".format(self.prefix, entity, e)])
         return data
 
     def gen_workspaces(self, quantity) -> List[List[str]]:
