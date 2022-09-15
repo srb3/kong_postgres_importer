@@ -34,6 +34,7 @@ class Runner(object):
         route_dump_location=None,
         route_prefix=None,
         route_trailing_slash=None,
+        route_regex_path=None,
     ) -> None:
         """
         Parameters
@@ -59,6 +60,7 @@ class Runner(object):
         ]
         self.route_prefix = route_prefix
         self.route_trailing_slash = route_trailing_slash
+        self.route_regex_path = route_regex_path
 
         self.number_of_services: int = int(self.data["services_per_workspace"])
         self.number_of_routes: int = int(self.data["routes_per_service"])
@@ -302,6 +304,8 @@ class Runner(object):
             path = "/" + name
         if self.route_trailing_slash:
             path = path + "/"
+        elif self.route_regex_path:
+            path = path + "/\\\w+$"
         return "{},{},{},{{http% https}},{{{}}},0,true,false,426,v0,{},true,true,{{GET% POST}},{},{},{{}}".format(
             uuid.uuid4(),
             name,
@@ -694,6 +698,12 @@ them if this flag is set",
         help="Append a trailing slash to the route path",
     )
 
+    parser.add_argument(
+        "--route-regex-path",
+        action="store_true",
+        help="trun the routes path into a regex path",
+    )
+
     args = parser.parse_args()
     params = {
         "hostname": args.hostname,
@@ -701,6 +711,7 @@ them if this flag is set",
         "username": args.username,
         "password": args.password,
     }
+
     Runner(
         args.config_file,
         params,
@@ -709,4 +720,5 @@ them if this flag is set",
         args.route_dump_location,
         args.route_prefix,
         args.route_trailing_slash,
+        args.route_regex_path,
     )

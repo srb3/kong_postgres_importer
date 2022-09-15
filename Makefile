@@ -13,9 +13,11 @@ kong_admin_token ?= password
 update_rate ?= 30
 update_type ?= service_retries
 
+# kong_version ?= 3.0.0.0-rhel
 kong_version ?= 2.8.1.3-rhel7
 kong_image ?= kong/kong-gateway
 mem_cache_size ?= 256m
+lmdb_map_size ?= 1024m
 portal_app_auth ?= kong-oauth2
 plugins ?= acl,acme,application-registration,aws-lambda,azure-functions,basic-auth,bot-detection,canary,collector,correlation-id,cors,datadog,degraphql,exit-transformer,file-log,forward-proxy,graphql-proxy-cache-advanced,graphql-rate-limiting-advanced,grpc-gateway,grpc-web,hmac-auth,http-log,ip-restriction,jq,jwt,jwt-signer,kafka-log,kafka-upstream,key-auth,key-auth-enc,ldap-auth,ldap-auth-advanced,loggly,mocking,oauth2,oauth2-introspection,opa,openid-connect,post-function,pre-function,prometheus,proxy-cache,proxy-cache-advanced,rate-limiting,rate-limiting-advanced,request-size-limiting,request-termination,request-transformer,request-transformer-advanced,request-validator,response-ratelimiting,response-transformer,response-transformer-advanced,route-by-header,route-transformer-advanced,session,statsd,statsd-advanced,syslog,tcp-log,udp-log,upstream-timeout,vault-auth,zipkin,splunk-hec
 log_level ?= debug
@@ -95,6 +97,7 @@ export KONG_PLUGINS=${plugins}
 export KONG_WORKER_STATE_UPDATE_FREQUENCY=${worker_state_update_frequency}
 export KONG_WORKER_CONSISTENCY=${worker_consistency}
 export KONG_LUA_SSL_TRUSTED_CERTIFICATE=${lua_ssl_trusted_certificate}
+export KONG_LMDB_MAP_SIZE=${lmdb_map_size}
 
 export CONFIG_FILE_PATH = ${config_file_path}
 

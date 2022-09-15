@@ -56,6 +56,7 @@ services:
       - KONG_PLUGINS=${KONG_PLUGINS}
       - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
       - KONG_LUA_SSL_TRUSTED_CERTIFICATE=${KONG_LUA_SSL_TRUSTED_CERTIFICATE:-system}
+      - KONG_LMDB_MAP_SIZE=${KONG_LMDB_MAP_SIZE:-128m}
     extra_hosts:
       - "postgres:10.5.0.2"
       - "kong-control-plane:10.5.0.3"
@@ -125,6 +126,7 @@ services:
       - KONG_PLUGINS=${KONG_PLUGINS}
       - KONG_LUA_PACKAGE_PATH=/opt/?.lua;;
       - KONG_LUA_SSL_TRUSTED_CERTIFICATE=${KONG_LUA_SSL_TRUSTED_CERTIFICATE:-system}
+      - KONG_LMDB_MAP_SIZE=${KONG_LMDB_MAP_SIZE:-128m}
     extra_hosts:
       - "postgres:10.5.0.2"
       - "kong-control-plane:10.5.0.3"
