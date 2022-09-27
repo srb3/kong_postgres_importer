@@ -1,6 +1,13 @@
 .PHONY: all integration_up integration_down generate_config clean_config script_run script_clean splunk_setup
 SHELL := /usr/bin/env bash
 
+APP_VERSION ?= 0.1.2
+DOCKER_USERNAME ?= kongcx
+
+DOCKER_BUILD_CMD=docker build -t kong-pg-importer:$(APP_VERSION) .
+DOCKER_TAG_CMD=docker tag kong-pg-importer:$(APP_VERSION) $(DOCKER_USERNAME)/kong-pg-importer:$(APP_VERSION)
+DOCKER_PUSH_CMD=docker push $(DOCKER_USERNAME)/kong-pg-importer:$(APP_VERSION)
+
 test_files ?= ./tests/fixtures/integration/docker/
 config_file_path ?= config.yaml
 db_hostname ?= 127.0.0.1
@@ -212,8 +219,8 @@ service_path: $(service_path)
 routes_per_service: $(number_of_routes)
 plugins:
   request-termination:
-	  config:
-		  status_code: 200
+    config:
+      status_code: 200
       message: OK
 endef
 
@@ -227,6 +234,9 @@ generate_config:
 
 generate_config_plain:
 	echo "$$CONFIG_FILE_PLAIN" > $(CONFIG_FILE_PATH)
+
+generate_config_plain_term:
+	echo "$$CONFIG_FILE_PLAIN_TERM" > $(CONFIG_FILE_PATH)
 
 clean_config:
 	rm -f $(CONFIG_FILE_PATH)
@@ -305,12 +315,25 @@ script_clean:
 
 perf_test:
 	@echo "running performance test"; \
-	pushd $(test_files); \
 	docker-compose -f docker-compose.yml \
 	-f k6/k6.yml run -v "$$(pwd)/k6/samples:/scripts" k6 run \
 	--summary-trend-stats="min,med,avg,max,p(90),p(95),p(99),p(99.9),p(99.99)" \
 	--insecure-skip-tls-verify=true \
 	-e DATA_FILE=$${DATA_FILE} -e RATE=$${RATE} -e TIME_UNIT=$${TIME_UNIT} \
 	-e DURATION=$${DURATION} -e VUS=$${VUS} -e MAX_VUS=$${MAX_VUS} \
-	-e PROXY_URL=$${PROXY_URL} $${K6_FILE}; \
-	popd;
+	-e PROXY_URL=$${PROXY_URL} $${K6_FILE};
+
+docker_publish: docker_build docker_tag docker_push
+
+docker_build:
+	@echo "build image version: $(APP_VERSION) $(DOCKER_USERNAME)"; \
+	$(DOCKER_BUILD_CMD)
+
+docker_tag:
+	@echo "tagging image version: $(APP_VERSION)"; \
+	$(DOCKER_TAG_CMD)
+
+docker_push:
+	@echo "push image version: $(APP_VERSION) to $(DOCKER_USERNAME)"; \
+	$(DOCKER_PUSH_CMD)
+
